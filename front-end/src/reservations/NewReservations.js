@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { createReservation } from "../utils/api";
 import { useHistory } from "react-router-dom";
 
@@ -6,12 +6,12 @@ function NewReservation() {
   let history = useHistory();
 
   const initalForm = {
-    firstName : "", 
-    lastName : "", 
-    mobileNumber : "", 
-    reservationDate : "", 
-    reservationTime : "", 
-    people : "",
+    first_name: "",
+    last_name: "",
+    mobile_number: "",
+    reservation_date: "",
+    reservation_time: "",
+    people: "1",
   };
 
   const [form, setForm] = useState({...initalForm});
@@ -28,9 +28,7 @@ function NewReservation() {
     catch(err){
       console.log(err);
     }
-    
-    history.push(`/dashboard?date=${form.reservationDate}`);
-    console.log("HI");
+    history.push(`/dashboard?date=${form.reservation_date}`);
   }
 
   const handleCancel = () => {
@@ -46,8 +44,8 @@ function NewReservation() {
           type="text"
           name="first_name"
           required
-          onChange={(e) => handleChange(e, "firstName")}
-          value={form.firstName}
+          onChange={(e) => handleChange(e, "first_name")}
+          value={form.first_name}
         />
       </label>
       <label htmlFor="last_name">
@@ -57,8 +55,8 @@ function NewReservation() {
           type="text"
           name="last_name"
           required
-          onChange={(e) => handleChange(e, "lastName")}
-          value={form.lastName}
+          onChange={(e) => handleChange(e, "last_name")}
+          value={form.last_name}
         />
       </label>
       <label htmlFor="mobile_number">
@@ -70,8 +68,8 @@ function NewReservation() {
           placeholder="555-555-5555"
           pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
           required
-          onChange={(e) => handleChange(e, "mobileNumber")}
-          value={form.mobileNumber}
+          onChange={(e) => handleChange(e, "mobile_number")}
+          value={form.mobile_number}
         />
       </label>
       <label htmlFor="reservation_date">
@@ -83,8 +81,8 @@ function NewReservation() {
           placeholder="YYYY-MM-DD"
           pattern="\d{4}-\d{2}-\d{2}"
           required
-          onChange={(e) => handleChange(e, "reservationDate")}
-          value={form.reservationDate}
+          onChange={(e) => handleChange(e, "reservation_date")}
+          value={form.reservation_date}
         />
       </label>
       <label htmlFor="reservation_time">
@@ -96,8 +94,8 @@ function NewReservation() {
           placeholder="HH:MM" 
           pattern="[0-9]{2}:[0-9]{2}"
           required
-          onChange={(e) => handleChange(e, "reservationTime")}
-          value={form.reservationTime}
+          onChange={(e) => handleChange(e, "reservation_time")}
+          value={form.reservation_time}
         />
       </label>
       <label htmlFor="people">

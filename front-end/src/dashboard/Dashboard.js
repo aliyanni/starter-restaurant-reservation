@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
-import { useLocation } from "react-router";
+import { useLocation, useHistory} from "react-router";
+import { previous, today, next } from "../utils/date-time";
 
 /**
  * Defines the dashboard page.
@@ -12,10 +13,12 @@ import { useLocation } from "react-router";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const { search } = useLocation();
+  const history = useHistory();
+  if(search){
+    date = search.replace("?date=", "");    
+  }
 
-  const {search} = useLocation();
-  date = search.replace("?date=", "");
-  console.log(search.replace("?date=", ""), "PARAMs")
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
@@ -27,6 +30,22 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
+  const handlePrevious = (e) => {
+    e.preventDefault();
+    history.push(`/dashboard?date=${previous(date)}`);
+
+  }
+
+  const handleToday = (e) => {
+    e.preventDefault();
+    history.push(`/dashboard?date=${today()}`);
+  }
+
+  const handleNext = (e) => {
+    e.preventDefault();
+    history.push(`/dashboard?date=${next(date)}`);
+  }
+
   return (
     <main>
       <h1>Dashboard</h1>
@@ -35,6 +54,11 @@ function Dashboard({ date }) {
       </div>
       <ErrorAlert error={reservationsError} />
       {JSON.stringify(reservations)}
+      <div>
+        <button type="button" onClick={handlePrevious}>Previous</button>
+        <button type="button" onClick={handleToday}>Today</button>
+        <button type="button" onClick={handleNext}>Next</button>
+      </div>
     </main>
   );
 }
