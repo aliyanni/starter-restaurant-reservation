@@ -25,7 +25,7 @@ function NewReservation() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createReservation(form, AbortController.signal);
+      await createReservation({...form, people: Number(form.people)}, AbortController.signal);
       history.push(`/dashboard?date=${form.reservation_date}`);
     } 
     catch(err){
