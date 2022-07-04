@@ -42,6 +42,27 @@ function hasMobileNumber(req, res, next) {
   next({ status: 400, message: "mobile_number property required." });
 }
 
+function noTuesday(req, res, next) {
+  const date = req.body.data.reservation_date;
+  const weekday = new Date(date).getUTCDay();
+  if (weekday !== 2) {
+    return next();
+  }
+  next({ status: 400, message: "Restaurant is closed on Tuesdays." });
+}
+
+function noReservationsInPast(req, res, next) {
+  const { reservation_date, reservation_time } = req.body.data;
+  const now = Date.now();
+  const proposedReservation = new Date(
+    `${reservation_date} ${reservation_time}`
+  ).valueOf();
+  if (proposedReservation > now) {
+    return next();
+  }
+  next({ status: 400, message: "Reservation must be in future." });
+}
+
 function hasReservationDate(req, res, next) {
   const date = req.body.data.reservation_date;
   if (date) {
@@ -109,6 +130,8 @@ module.exports = {
     hasFirstName,
     hasLastName,
     hasMobileNumber,
+    noTuesday,
+    noReservationsInPast,
     hasReservationDate,
     validDate,
     hasReservationTime,
