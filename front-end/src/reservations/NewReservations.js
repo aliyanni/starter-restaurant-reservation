@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createReservation } from "../utils/api";
 import { useHistory } from "react-router-dom";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function NewReservation() {
   let history = useHistory();
@@ -15,6 +16,7 @@ function NewReservation() {
   };
 
   const [form, setForm] = useState({...initalForm});
+  const [error, setError] = useState(null);
 
   function handleChange(e, key) {
     setForm({ ...form, [key]: e.target.value });
@@ -24,11 +26,12 @@ function NewReservation() {
     e.preventDefault();
     try {
       await createReservation(form, AbortController.signal);
+      history.push(`/dashboard?date=${form.reservation_date}`);
     } 
     catch(err){
+      setError(err);
       console.log(err);
     }
-    history.push(`/dashboard?date=${form.reservation_date}`);
   }
 
   const handleCancel = () => {
@@ -36,6 +39,9 @@ function NewReservation() {
   }
 
   return (
+    <>
+    <h1> Create A Reservation </h1>
+    <ErrorAlert error={error} />
     <form onSubmit={handleSubmit}>
       <label htmlFor="first_name">
         First Name:
@@ -43,7 +49,6 @@ function NewReservation() {
           id="first_name"
           type="text"
           name="first_name"
-          required
           onChange={(e) => handleChange(e, "first_name")}
           value={form.first_name}
         />
@@ -54,7 +59,6 @@ function NewReservation() {
           id="last_name"
           type="text"
           name="last_name"
-          required
           onChange={(e) => handleChange(e, "last_name")}
           value={form.last_name}
         />
@@ -67,7 +71,6 @@ function NewReservation() {
           name="mobile_number"
           placeholder="555-555-5555"
           pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-          required
           onChange={(e) => handleChange(e, "mobile_number")}
           value={form.mobile_number}
         />
@@ -80,7 +83,6 @@ function NewReservation() {
           name="reservation_date"
           placeholder="YYYY-MM-DD"
           pattern="\d{4}-\d{2}-\d{2}"
-          required
           onChange={(e) => handleChange(e, "reservation_date")}
           value={form.reservation_date}
         />
@@ -93,7 +95,6 @@ function NewReservation() {
           name="reservation_time"
           placeholder="HH:MM" 
           pattern="[0-9]{2}:[0-9]{2}"
-          required
           onChange={(e) => handleChange(e, "reservation_time")}
           value={form.reservation_time}
         />
@@ -104,7 +105,6 @@ function NewReservation() {
           id="people"
           type="number"
           name="people"
-          required
           onChange={(e) => handleChange(e, "people")}
           value={form.people}
         />
@@ -112,6 +112,7 @@ function NewReservation() {
       <button type="submit">Submit</button>
       <button type="cancel" onClick={handleCancel}>Cancel</button>
     </form>
+    </>
   );
 }
 
