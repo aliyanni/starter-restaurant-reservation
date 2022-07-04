@@ -40,7 +40,7 @@ function NewReservation() {
 
   return (
     <>
-    <h1> Create A Reservation </h1>
+    <h1>Create A Reservation</h1>
     <ErrorAlert error={error} />
     <form onSubmit={handleSubmit}>
       <label htmlFor="first_name">
