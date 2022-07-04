@@ -48,7 +48,7 @@ function noTuesday(req, res, next) {
   if (weekday !== 2) {
     return next();
   }
-  next({ status: 400, message: "Restaurant is closed on Tuesdays." });
+  next({ status: 400, message: "reservation_date is not valid, restaurant closed on Tuesdays." });
 }
 
 function noReservationsInPast(req, res, next) {
@@ -60,7 +60,7 @@ function noReservationsInPast(req, res, next) {
   if (proposedReservation > now) {
     return next();
   }
-  next({ status: 400, message: "Reservation must be in future." });
+  next({ status: 400, message: "reservation_date must be in future." });
 }
 
 function hasReservationDate(req, res, next) {
@@ -105,7 +105,7 @@ function reservationDuringHours(req, res, next) {
   if (time >= open && time <= close) {
     return next();
   }
-  next({ status: 400, message: "Reservation must be between 10:30 AM and 9:30 PM."});
+  next({ status: 400, message: "reservation_time must be between 10:30 AM and 9:30 PM."});
 }
 
 function hasValidPeople(req, res, next) {
@@ -141,11 +141,11 @@ module.exports = {
     hasLastName,
     hasMobileNumber,
     noTuesday,
-    noReservationsInPast,
     hasReservationDate,
     validDate,
     hasReservationTime,
     validTime,
+    noReservationsInPast,
     reservationDuringHours,
     hasValidPeople,
     asyncErrorBoundary(create),
