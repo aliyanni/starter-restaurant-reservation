@@ -98,6 +98,16 @@ function validTime(req, res, next) {
   next({ status: 400, message: "reservation_time must be valid time." });
 }
 
+function reservationDuringHours(req, res, next) {
+  const time = req.body.data.reservation_time;
+  const open = "10:30";
+  const close = "21:30";
+  if (time >= open && time <= close) {
+    return next();
+  }
+  next({ status: 400, message: "Reservation must be between 10:30 AM and 9:30 PM."});
+}
+
 function hasValidPeople(req, res, next) {
   const people = req.body.data.people;
   if (people > 0 && typeof people === "number") {
@@ -136,6 +146,7 @@ module.exports = {
     validDate,
     hasReservationTime,
     validTime,
+    reservationDuringHours,
     hasValidPeople,
     asyncErrorBoundary(create),
   ],
