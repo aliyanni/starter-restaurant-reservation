@@ -25,8 +25,11 @@ function NewReservation() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createReservation({...form, people: Number(form.people)}, AbortController.signal);
+      const abortController = new AbortController();
+      setError(null)
+      await createReservation({...form, people: Number(form.people)}, abortController.signal);
       history.push(`/dashboard?date=${form.reservation_date}`);
+      return () => abortController.abort()
     } 
     catch(err){
       setError(err);
@@ -70,7 +73,6 @@ function NewReservation() {
           type="tel"
           name="mobile_number"
           placeholder="555-555-5555"
-          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
           onChange={(e) => handleChange(e, "mobile_number")}
           value={form.mobile_number}
         />
