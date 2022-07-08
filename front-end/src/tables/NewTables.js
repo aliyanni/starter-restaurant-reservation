@@ -62,9 +62,7 @@ function NewTables() {
           />
         </label>
         <button type="submit">Submit</button>
-        <button type="cancel" onClick={handleCancel}>
-          Cancel
-        </button>
+        <button type="button" onClick={handleCancel}>Cancel</button>
       </form>
     </>
   );

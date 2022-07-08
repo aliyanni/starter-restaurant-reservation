@@ -39,7 +39,7 @@ function ReservationSeat() {
     return (
       <> 
         <div className="mb-3">
-          <h1> Seat The Current Reservation </h1>
+          <h1>Seat The Current Reservation</h1>
         </div>
         
         <ErrorAlert error={error} />
@@ -50,7 +50,7 @@ function ReservationSeat() {
         
         <form className="form-group" onSubmit={handleSubmit}>
           <div className="col mb-3">
-            <label className="form-label" htmlFor="table_id"> Select Table </label>
+            <label className="form-label" htmlFor="table_id">Select Table</label>
               <select
                 className="form-control"
                 name="table_id"
@@ -70,14 +70,14 @@ function ReservationSeat() {
               </select>
           </div>
           <button type="button" onClick={() => history.goBack()} className="btn btn-secondary mr-2"> Cancel </button>
-          <button className="btn btn-primary" type="submit"> Submit </button>
+          <button className="btn btn-primary" type="submit">Submit</button>
         </form>
       </>
     );
   } else {
     return (
       <div>
-        <h1> No open tables to seat </h1>
+        <h1>No Open Tables</h1>
       </div>
     )
   }

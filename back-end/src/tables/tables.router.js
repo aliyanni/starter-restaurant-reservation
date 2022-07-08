@@ -10,6 +10,7 @@
  router
  .route("/:table_id([0-9]+)/seat")
  .put(controller.updateSeatReservation)
+ .delete(controller.delete)
  //.all(methodNotAllowed);
 
  router

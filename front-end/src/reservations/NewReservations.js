@@ -81,8 +81,8 @@ function NewReservation() {
           id="reservation_date"
           type="date"
           name="reservation_date"
-          placeholder="YYYY-MM-DD"
-          pattern="\d{4}-\d{2}-\d{2}"
+          placeholder="DD-MM-YYY"
+          pattern="\d{2}-\d{2}-\d{4}"
           onChange={(e) => handleChange(e, "reservation_date")}
           value={form.reservation_date}
         />
@@ -110,7 +110,7 @@ function NewReservation() {
         />
       </label>
       <button type="submit">Submit</button>
-      <button type="cancel" onClick={handleCancel}>Cancel</button>
+      <button type="button" onClick={handleCancel}>Cancel</button>
     </form>
     </>
   );
