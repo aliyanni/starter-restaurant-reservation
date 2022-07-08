@@ -15,6 +15,7 @@ function create(newReservation) {
   return knex("reservations")
     .insert({
       ...newReservation,
+      status: "booked",
     })
     .returning("*")
     .then((result) => result[0]);
@@ -27,9 +28,16 @@ function read(reservation_id) {
     .then((result) => result[0]);
 }
 
+async function updateStatus(reservation_id, status) {
+  return knex('reservations')
+    .where({ reservation_id })
+    .update({status: status }, '*')
+}
+
 module.exports = {
   list,
   listByDate,
   create,
   read,
+  updateStatus
 };

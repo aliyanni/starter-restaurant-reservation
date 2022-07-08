@@ -8,6 +8,7 @@ function create(newTable) {
   return knex("tables")
     .insert({
       ...newTable,
+      table_status: newTable.reservation_id ? "occupied" : "free",
     })
     .returning("*")
     .then((result) => result[0]);
@@ -32,8 +33,7 @@ function readTableByReservation(reservation_id) {
 }
 
 async function updateSeatReservation(reservation_id, table_id) {
-  const trx = await knex.transaction();
-  return trx("tables")
+  return knex("tables")
     .where({ table_id })
     .update(
       {
@@ -43,10 +43,8 @@ async function updateSeatReservation(reservation_id, table_id) {
       "*"
     )
     .then(() =>
-      trx("reservations").where({ reservation_id }).update({ status: "seated" })
+      knex("reservations").where({ reservation_id }).update({ status: "seated" })
     )
-    .then(trx.commit)
-    .catch(trx.rollback);
 }
 
 async function destroyTableReservation(table_id, reservation_id) {

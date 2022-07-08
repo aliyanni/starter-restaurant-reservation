@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-
 import { deleteTableReservation, listTables, updateResStatus } from "../utils/api";
-import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function TableInfo({ table }) {
   const [currentTable, setCurrentTable] = useState(table);
-  const history = useHistory();
   const [error, setError] = useState(null);
 
   async function clearAndLoadTables() {
@@ -30,8 +27,10 @@ function TableInfo({ table }) {
       await updateResStatus({ status: "finished"}, currentTable.reservation_id, abortController.signal);
       const newTable = await clearAndLoadTables();
       console.log(newTable);
-      history.push("/tables");
       return;
+    }
+    else{
+      return
     }
      
   }
