@@ -3,7 +3,7 @@ function TableHeader({ headers }) {
     <thead>
       <tr>
         {headers.map((element, i) => (
-          <th key={i} scope="col">{element}</th>
+          <th key={`${element}-${i}`} scope="col">{element}</th>
         ))}
       </tr>
     </thead>

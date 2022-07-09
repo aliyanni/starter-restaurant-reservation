@@ -36,7 +36,7 @@ function ReservationInfo({ reservation, setError }) {
         {reservation.status}
       </td>
       <td>
-        {reservation.status === "booked" ? (
+        {reservation.status === "booked" && (
           <>
             <a
               href={`/reservations/${reservation.reservation_id}/seat`}
@@ -54,8 +54,6 @@ function ReservationInfo({ reservation, setError }) {
               Cancel
             </button>
           </>
-        ) : (
-          "No actions for this reservation"
         )}
       </td>
     </tr>

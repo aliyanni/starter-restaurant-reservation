@@ -187,7 +187,7 @@ module.exports = {
     reservationDuringHours,
     asyncErrorBoundary(create),
   ],
-  read: [asyncErrorBoundary(reservationExists), read],
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   updateReservation: [
     asyncErrorBoundary(reservationExists),
     hasRequiredProperties,
