@@ -19,16 +19,17 @@ function ReservationSeat() {
   useEffect(() => {
     const abortController = new AbortController();
     setError(null);
-    listTables().then(setTables).catch(setError);
+    listTables(abortController.signal).then(setTables).catch(setError);
 
     return () => abortController.abort();
   }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const abortController = new AbortController();
     const tableObj = JSON.parse(tableFormData);
     try {
-      const updatedTable = await updateSeat(tableObj.table_id, reservation_id);
+      const updatedTable = await updateSeat(tableObj.table_id, reservation_id, abortController.signal);
       const newTables = tables.map((table) =>
         table.table_id === updatedTable.table_id ? updatedTable : table
       );

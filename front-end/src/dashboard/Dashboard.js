@@ -30,7 +30,7 @@ function Dashboard({ date }) {
     try {
       const [reservationsResponse, tablesResponse] = await Promise.all([
         listReservations({ date }, abortController.signal),
-        listTables(),
+        listTables(abortController.signal),
       ]);
       setReservations(reservationsResponse);
       setTables(tablesResponse);
