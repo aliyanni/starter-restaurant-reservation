@@ -10,15 +10,15 @@ function ReservationSearch() {
   const [reservations, setReservations] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    listReservations({ mobile_number })
-      .then((response) => {
-        setReservations(response);
-
-      })
-      .catch((err) => setError(err));
+    try {
+      const reservationsResponse = await listReservations({ mobile_number });
+      setReservations(reservationsResponse)
+    } catch (err) {
+      setError(err)
+    }
   };
 
   return (
