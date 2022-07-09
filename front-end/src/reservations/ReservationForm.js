@@ -7,7 +7,7 @@ import {
 import { useHistory, useParams } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function NewReservation({ isEdit = false }) {
+function ReservationForm({ isEdit = false }) {
   let history = useHistory();
 
   const initalForm = {
@@ -157,4 +157,4 @@ function NewReservation({ isEdit = false }) {
   );
 }
 
-export default NewReservation;
+export default ReservationForm;
