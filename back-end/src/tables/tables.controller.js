@@ -1,5 +1,6 @@
 const service = require("./tables.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const hasProperties = require("../errors/requiredProperties");
 
 function hasData(req, res, next) {
   if (req.body.data) {
@@ -7,6 +8,9 @@ function hasData(req, res, next) {
   }
   next({ status: 400, message: "Body must have a data property." });
 }
+
+const REQUIRED_PROPERTIES = ["table_name", "capacity"];
+const hasRequiredProperties = hasProperties(...REQUIRED_PROPERTIES);
 
 function hasReservationID(req, res, next) {
   const reservation = req.body.data.reservation_id;
@@ -17,7 +21,9 @@ function hasReservationID(req, res, next) {
 }
 
 async function reservationExists(req, res, next) {
-  const reservation = await service.readReservation(req.body.data.reservation_id);
+  const reservation = await service.readReservation(
+    req.body.data.reservation_id
+  );
   if (reservation) {
     res.locals.reservation = reservation;
     return next();
@@ -25,26 +31,33 @@ async function reservationExists(req, res, next) {
   next({
     status: 404,
     message: `reservation_id ${req.body.data.reservation_id} does not exist`,
-  })
+  });
 }
 
 async function reservationSeated(req, res, next) {
-  const seated = await service.readTableByReservation(req.body.data.reservation_id);
+  const seated = await service.readTableByReservation(
+    req.body.data.reservation_id
+  );
   if (!seated) {
     return next();
   }
   next({
     status: 400,
     message: "reservation_id is already seated",
-  })
+  });
 }
 
-function hasTableName(req, res, next) {
-  const name = req.body.data.table_name;
-  if (name) {
+async function tableExists(req, res, next) {
+  const table_id = req.params.table_id;
+  const table = await service.readTable(table_id);
+  if (table) {
+    res.locals.table = table;
     return next();
   }
-  next({ status: 400, message: "table_name property required." });
+  next({
+    status: 404,
+    message: `table_id ${table_id} does not exist`,
+  });
 }
 
 function validTableName(req, res, next) {
@@ -56,25 +69,6 @@ function validTableName(req, res, next) {
     status: 400,
     message: "table_name must be longer than 2 characters.",
   });
-}
-
-function tableOpen(req, res, next) {
-  const table = res.locals.table;
-  if (!table.reservation_id) {
-    return next();
-  }
-  next({
-    status: 400,
-    message: `table_id is occupied`,
-  })
-}
-
-function hasTableCapacity(req, res, next) {
-  const capacity = req.body.data.capacity;
-  if (capacity) {
-    return next();
-  }
-  next({ status: 400, message: "table capacity property required" });
 }
 
 function validTableCapacity(req, res, next) {
@@ -91,33 +85,31 @@ async function hasEnoughSeats(req, res, next) {
     next({
       status: 400,
       message: "table capacity is smaller than reservation size",
-    })  
+    });
   }
-  return next();  
+  return next();
 }
 
-async function tableExists(req, res, next) {
-  const table_id = req.params.table_id;
-  const table = await service.readTable(table_id);
-  if (table) {
-    res.locals.table = table;
+function tableOpen(req, res, next) {
+  const table = res.locals.table;
+  if (!table.reservation_id) {
     return next();
   }
   next({
-    status: 404,
-    message: `table_id ${table_id} does not exist`,
-  })
+    status: 400,
+    message: `table_id is occupied`,
+  });
 }
 
 function tableNotOpen(req, res, next) {
   const table = res.locals.table;
-  if (table.table_status === 'occupied') {
+  if (table.table_status === "occupied") {
     return next();
   }
   next({
     status: 400,
     message: "table_id is not occupied",
-  })
+  });
 }
 
 async function list(req, res) {
@@ -133,24 +125,26 @@ async function create(req, res) {
 
 async function updateSeatReservation(req, res) {
   const { reservation, table } = res.locals;
-  const data = await service.updateSeatReservation(reservation.reservation_id, table.table_id);
-  res.json({ data })
+  const data = await service.updateSeatReservation(
+    reservation.reservation_id,
+    table.table_id
+  );
+  res.json({ data });
 }
 
 async function destroy(req, res) {
   const table = res.locals.table;
   await service.destroyTableReservation(table.table_id, table.reservation_id);
   const data = await service.list();
-  res.json({data});
+  res.json({ data });
 }
 
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
     hasData,
-    hasTableName,
+    hasRequiredProperties,
     validTableName,
-    hasTableCapacity,
     validTableCapacity,
     asyncErrorBoundary(create),
   ],
