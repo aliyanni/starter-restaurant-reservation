@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { updateResStatus } from "../utils/api";
 
-function ReservationInfo({ date, reservation, setError }) {
+function ReservationInfo({ reservation, setError }) {
   const history = useHistory();
   const handleCancelReservation = async (event) => {
     event.preventDefault();
@@ -39,9 +39,7 @@ function ReservationInfo({ date, reservation, setError }) {
         {reservation.status === "booked" ? (
           <>
             <a
-              href={`/reservations/${reservation.reservation_id}/seat${
-                date ? `?date=${date}` : ""
-              }`}
+              href={`/reservations/${reservation.reservation_id}/seat`}
             >
               <button className="btn btn-primary">Seat</button>
             </a>
