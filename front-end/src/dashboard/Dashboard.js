@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useCallback } from "react";
 import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { useLocation, useHistory } from "react-router";
@@ -25,24 +25,26 @@ function Dashboard({ date }) {
     date = search.replace("?date=", "");
   }
 
+  const loadDashboard =  useCallback(async () => {
+    const abortController = new AbortController();
+    try {
+      const [reservationsResponse, tablesResponse] = await Promise.all([
+        listReservations({ date }, abortController.signal),
+        listTables(),
+      ]);
+      setReservations(reservationsResponse);
+      setTables(tablesResponse);
+    } catch (err) {
+      console.log(err);
+      setError(err);
+    }
+  }, [date])
+
   useEffect(() => {
     const abortController = new AbortController();
-    async function loadDashboard() {
-      try {
-        const [reservationsResponse, tablesResponse] = await Promise.all([
-          listReservations({ date }, abortController.signal),
-          listTables(),
-        ]);
-        setReservations(reservationsResponse);
-        setTables(tablesResponse);
-      } catch (err) {
-        console.log(err)
-        setError(err);
-      }
-    }
     loadDashboard();
     return () => abortController.abort();
-  }, [date]);
+  }, [date, loadDashboard]);
 
   function clearTables(tables) {
     let result = [];
@@ -87,16 +89,20 @@ function Dashboard({ date }) {
             "Phone Number",
             "Date",
             "Time",
+            "Status",
             "Seat",
           ]}
         />
         <tbody>
-          {reservations.map((reservation) => (
-            <ReservationInfo
-              reservation={reservation}
-              key={reservation.reservation_id}
-            />
-          ))}
+          {reservations
+            .filter((reservation) => reservation.status !== "finished")
+            .map((reservation) => (
+              <ReservationInfo
+                date={date}
+                reservation={reservation}
+                key={reservation.reservation_id}
+              />
+            ))}
         </tbody>
       </table>
       <div>
@@ -132,7 +138,7 @@ function Dashboard({ date }) {
           />
           <tbody>
             {tables.map((table) => (
-              <TableInfo table={table} key={table.table_id} />
+              <TableInfo table={table} loadDashboard={loadDashboard} key={table.table_id} />
             ))}
           </tbody>
         </table>

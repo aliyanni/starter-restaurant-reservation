@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router";
 import { listTables, updateSeat} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import { useLocation } from "react-router";
 
 function ReservationSeat() {
   const history = useHistory();
@@ -9,7 +10,12 @@ function ReservationSeat() {
   const [tables, setTables] = useState([]);
   const [tableFormData, setTableFormData] = useState({});
   const [error, setError] = useState(null);
-  
+  let date;
+  const { search } = useLocation();
+  if (search) {
+    date = search.replace("?date=", "");
+  }
+
   useEffect(() => {
     const abortController = new AbortController();
     setError(null);
@@ -29,7 +35,7 @@ function ReservationSeat() {
         return table.table_id === response.table_id ? response : table
       })
       setTables(newTables)
-      history.push('/dashboard')
+      history.push(`/dashboard${date ? `?date=${date}` : ''}`)
     })
     
     .catch(setError);

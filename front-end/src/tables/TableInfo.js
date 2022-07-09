@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { deleteTableReservation, listTables, updateResStatus } from "../utils/api";
+import { deleteTableReservation, updateResStatus } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function TableInfo({ table }) {
+function TableInfo({ table, loadDashboard }) {
   const [currentTable, setCurrentTable] = useState(table);
   const [error, setError] = useState(null);
 
@@ -12,7 +12,6 @@ function TableInfo({ table }) {
       const response = await deleteTableReservation(currentTable.table_id, abortController.signal);
       const tableToSet = response.find((table) => table.table_id === currentTable.table_id);
       setCurrentTable({...tableToSet})
-      listTables()
       return tableToSet;
     } catch (error) {
       setError(error);
@@ -26,6 +25,7 @@ function TableInfo({ table }) {
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
       await updateResStatus({ status: "finished"}, currentTable.reservation_id, abortController.signal);
       const newTable = await clearAndLoadTables();
+      loadDashboard();
       console.log(newTable);
       return;
     }
