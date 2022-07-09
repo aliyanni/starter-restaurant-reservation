@@ -13,7 +13,7 @@ function ReservationInfo({ date, reservation }) {
       <td data-reservation-id-status={reservation.reservation_id}> {reservation.status} </td>
       <td>
         {reservation.status === "booked" && (
-          <a href={`/reservations/${reservation.reservation_id}/seat?date=${date}`}>
+          <a href={`/reservations/${reservation.reservation_id}/seat${date ? `?date=${date}` : ''}`}>
             <button className="btn btn-primary">Seat</button>
           </a>
         )}
