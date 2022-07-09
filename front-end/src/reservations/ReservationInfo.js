@@ -1,6 +1,29 @@
 import React from "react";
+import { useHistory } from "react-router";
+import { updateResStatus } from "../utils/api";
 
 function ReservationInfo({ date, reservation }) {
+  const history = useHistory();
+  const handleCancelReservation = async (event) => {
+    event.preventDefault();
+    if (
+      window.confirm(
+        "Do you want to cancel this reservation? This cannot be undone."
+      )
+    ) {
+      try {
+        await updateResStatus(
+          { status: "cancelled" },
+          reservation.reservation_id
+        );
+        history.push("/dashboard");
+      } catch (err) {
+        // todo setError by using prop from parent component
+        console.log(err);
+      }
+    }
+  };
+
   return (
     <tr>
       <th scope="row"> {reservation.reservation_id} </th>
@@ -10,13 +33,31 @@ function ReservationInfo({ date, reservation }) {
       <td> {reservation.mobile_number} </td>
       <td> {reservation.reservation_date} </td>
       <td> {reservation.reservation_time} </td>
-      <td data-reservation-id-status={reservation.reservation_id}> {reservation.status} </td>
+      <td data-reservation-id-status={reservation.reservation_id}>
+        {reservation.status}
+      </td>
       <td>
-        {reservation.status === "booked" && (
-          <a href={`/reservations/${reservation.reservation_id}/seat${date ? `?date=${date}` : ''}`}>
-            <button className="btn btn-primary">Seat</button>
-          </a>
-        )}
+        {reservation.status === "booked" ? (
+          <>
+            <a
+              href={`/reservations/${reservation.reservation_id}/seat${
+                date ? `?date=${date}` : ""
+              }`}
+            >
+              <button className="btn btn-primary">Seat</button>
+            </a>
+            <a href={`/reservations/${reservation.reservation_id}/edit`}>
+              <button className="btn btn-primary ml-2">Edit</button>
+            </a>
+            <button
+            data-reservation-id-cancel={`${reservation.reservation_id}`}
+              className="btn btn-danger ml-2"
+              onClick={handleCancelReservation}
+            >
+              Cancel
+            </button>
+          </>
+        ) : 'No actions for this reservation'}
       </td>
     </tr>
   );

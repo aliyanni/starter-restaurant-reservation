@@ -90,7 +90,7 @@ function Dashboard({ date }) {
             "Date",
             "Time",
             "Status",
-            "Seat",
+            "Actions",
           ]}
         />
         <tbody>

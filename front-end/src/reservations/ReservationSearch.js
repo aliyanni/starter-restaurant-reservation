@@ -1,34 +1,32 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import TableHeader from "../dashboard/TableHeader";
-import ErrorAlert from "../layout/ErrorAlert";
+import ErrorAlert from '../layout/ErrorAlert';
 import { listReservations } from "../utils/api";
 
 import ReservationInfo from "./ReservationInfo";
 
 function ReservationSearch() {
-  const [mobile_number, setMobile_number] = useState('');
+  const [mobile_number, setMobile_number] = useState("");
   const [reservations, setReservations] = useState(null);
-  const history = useHistory();
-  const [error, setError] = useState('No reservations found');
+  const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
-      e.preventDefault();
-      setError(null);
-      listReservations({ mobile_number })
+    e.preventDefault();
+    setError(null);
+    listReservations({ mobile_number })
       .then((response) => {
-        setReservations(response)
-        // history.push('/search')
+        setReservations(response);
+
       })
-      .catch(setError('No reservations found'))
-  }
+      .catch((err) => setError(err));
+  };
 
   return (
     <>
       <div className="mb-3">
-          <h1> Find Reservation </h1>
+        <h1> Find Reservation </h1>
       </div>
-      
+      <ErrorAlert error={error}/>
       <form className="form-group mb-3" onSubmit={handleSubmit}>
         <input
           type="search"
@@ -39,39 +37,40 @@ function ReservationSearch() {
           value={mobile_number}
         />
         <div>
-          <button type="submit" className="btn btn-primary"> find </button>
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
         </div>
       </form>
       <br />
-      {reservations && reservations.length ?
       <div>
         <h3 className="mb-3"> Matching Reservations </h3>
         <table className="table table-striped">
           <TableHeader
-          headers={[
-            "ID",
-            "First Name",
-            "Last Name",
-            "Party Size",
-            "Phone Number",
-            "Date",
-            "Time",
-            "Status",
-            "Seat",
-          ]}
-        />
+            headers={[
+              "ID",
+              "First Name",
+              "Last Name",
+              "Party Size",
+              "Phone Number",
+              "Date",
+              "Time",
+              "Status",
+              "Actions",
+            ]}
+          />
           <tbody>
-            {reservations.map((reservation) => (
-              <ReservationInfo reservation={reservation} />
-            ))}
+            {reservations && reservations.length ?
+            reservations.map((reservation) =>
+               (
+                <ReservationInfo reservation={reservation} />
+              )) : (
+                <p>No reservations found</p>
+              )
+            }
           </tbody>
         </table>
       </div>
-      :
-      <>
-       <ErrorAlert error={{ message: error }} />
-      </>
-      }
     </>
   );
 }
