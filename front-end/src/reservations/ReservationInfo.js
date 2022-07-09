@@ -4,6 +4,7 @@ import { updateResStatus } from "../utils/api";
 
 function ReservationInfo({ reservation, setError }) {
   const history = useHistory();
+  const abortController = new AbortController();
   const handleCancelReservation = async (event) => {
     event.preventDefault();
     if (
@@ -14,7 +15,8 @@ function ReservationInfo({ reservation, setError }) {
       try {
         await updateResStatus(
           { status: "cancelled" },
-          reservation.reservation_id
+          reservation.reservation_id,
+          abortController.signal
         );
         history.push("/dashboard");
       } catch (err) {

@@ -21,10 +21,11 @@ function NewTables() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const abortController = new AbortController();
     try {
       await createTable(
         { ...form, capacity: Number(form.capacity) },
-        AbortController.signal
+        abortController.signal
       );
       history.push(`/dashboard`);
     } catch (err) {

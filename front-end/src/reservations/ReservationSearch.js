@@ -12,9 +12,10 @@ function ReservationSearch() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const abortController = new AbortController();
     setError(null);
     try {
-      const reservationsResponse = await listReservations({ mobile_number });
+      const reservationsResponse = await listReservations({ mobile_number }, abortController.signal)
       setReservations(reservationsResponse)
     } catch (err) {
       setError(err)
