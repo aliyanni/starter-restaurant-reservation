@@ -31,6 +31,7 @@ function ReservationForm({ isEdit = false }) {
         .then((response) => {
           setForm({
             ...response,
+            reservation_date: response.reservation_date.slice(0, response.reservation_date.indexOf('T'))
           });
         })
         .catch(setError);
