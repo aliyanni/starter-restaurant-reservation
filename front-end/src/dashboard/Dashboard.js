@@ -101,6 +101,7 @@ function Dashboard({ date }) {
                 date={date}
                 reservation={reservation}
                 key={reservation.reservation_id}
+                setError={setError}
               />
             ))}
         </tbody>

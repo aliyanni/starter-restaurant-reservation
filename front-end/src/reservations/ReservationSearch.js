@@ -63,7 +63,7 @@ function ReservationSearch() {
             {reservations && reservations.length ?
             reservations.map((reservation) =>
                (
-                <ReservationInfo reservation={reservation} />
+                <ReservationInfo reservation={reservation} setError={setError} />
               )) : (
                 <p>No reservations found</p>
               )

@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { updateResStatus } from "../utils/api";
 
-function ReservationInfo({ date, reservation }) {
+function ReservationInfo({ date, reservation, setError }) {
   const history = useHistory();
   const handleCancelReservation = async (event) => {
     event.preventDefault();
@@ -18,8 +18,7 @@ function ReservationInfo({ date, reservation }) {
         );
         history.push("/dashboard");
       } catch (err) {
-        // todo setError by using prop from parent component
-        console.log(err);
+        setError(err);
       }
     }
   };
@@ -50,14 +49,16 @@ function ReservationInfo({ date, reservation }) {
               <button className="btn btn-primary ml-2">Edit</button>
             </a>
             <button
-            data-reservation-id-cancel={`${reservation.reservation_id}`}
+              data-reservation-id-cancel={`${reservation.reservation_id}`}
               className="btn btn-danger ml-2"
               onClick={handleCancelReservation}
             >
               Cancel
             </button>
           </>
-        ) : 'No actions for this reservation'}
+        ) : (
+          "No actions for this reservation"
+        )}
       </td>
     </tr>
   );
