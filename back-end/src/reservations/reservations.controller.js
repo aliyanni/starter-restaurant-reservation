@@ -80,19 +80,14 @@ async function reservationExists(req, res, next) {
 
 function noReservationsInPast(req, res, next) {
   const { reservation_date, reservation_time } = req.body.data;
-  const [hour, minute] = reservation_time.split(":");
-  let [year, month, date] = reservation_date.split("-");
-  month -= 1;
-  const reservationDate = new Date(year, month, date, hour, minute, 59, 59);
-  const today = new Date();
-
-  if (today <= reservationDate) {
+  const now = Date.now();
+  const proposedReservation = new Date(
+    `${reservation_date} ${reservation_time}`
+  ).valueOf();
+  if (proposedReservation > now) {
     return next();
   }
-  return next({
-    status: 400,
-    message: `reservation_date must be set in the future`,
-  });
+  next({ status: 400, message: "reservation_date must be in future." });
 }
 
 function noTuesday(req, res, next) {
