@@ -1,87 +1,10 @@
-import React, { useEffect, useState } from "react";
-import {
-  createReservation,
-  getReservation,
-  updateReservation,
-} from "../utils/api";
-import { useHistory, useParams } from "react-router-dom";
-import ErrorAlert from "../layout/ErrorAlert";
+import React from "react";
+import { useHistory } from "react-router-dom";
 
-function ReservationForm({ isEdit = false }) {
+function ReservationForm({ form, handleChange, handleSubmit }) {
   let history = useHistory();
 
-  const initalForm = {
-    first_name: "",
-    last_name: "",
-    mobile_number: "",
-    reservation_date: "",
-    reservation_time: "",
-    people: "1",
-  };
-
-  const [form, setForm] = useState({ ...initalForm });
-  const [error, setError] = useState(null);
-
-  const { reservation_id } = useParams();
-
-  useEffect(() => {
-    // If we are editing, get the reservation so we can prefill the form
-    if (isEdit) {
-      getReservation(reservation_id)
-        .then((response) => {
-          setForm({
-            ...response,
-            reservation_date: response.reservation_date.slice(0, response.reservation_date.indexOf('T'))
-          });
-        })
-        .catch(setError);
-    }
-    // Don't do anything if not editing
-    return;
-  }, [reservation_id, isEdit]);
-
-  function handleChange(e, key) {
-    setForm({ ...form, [key]: e.target.value });
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const abortController = new AbortController();
-      setError(null);
-      if (isEdit) {
-        await updateReservation(
-          { ...form, people: Number(form.people) },
-          abortController.signal
-        );
-      } else {
-        await createReservation(
-          { ...form, people: Number(form.people) },
-          abortController.signal
-        );
-      }
-      history.push(`/dashboard?date=${form.reservation_date}`);
-      return () => abortController.abort();
-    } catch (err) {
-      setError(err);
-      console.log(err);
-    }
-  };
-
-  const handleCancel = () => {
-    history.goBack();
-  };
-
   return (
-    <>
-      <h1>{isEdit ? "Edit" : "Create"} A Reservation</h1>
-      <ErrorAlert error={error} />
-      {isEdit && form.status !== "booked" ? (
-        <p>
-          You can't edit this reservation. A reservation must be in the 'booked'
-          status to edit.
-        </p>
-      ) : (
         <form onSubmit={handleSubmit}>
           <label htmlFor="first_name">
             First Name:
@@ -149,12 +72,10 @@ function ReservationForm({ isEdit = false }) {
             />
           </label>
           <button type="submit">Submit</button>
-          <button type="button" onClick={handleCancel}>
+          <button type="button" onClick={history.goBack}>
             Cancel
           </button>
         </form>
-      )}
-    </>
   );
 }
 
